@@ -1,0 +1,120 @@
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthResponse, AuthRequest, NewUserRequest } from '@/types/api';
+import { apiService } from '@/services/apiService';
+
+interface AuthContextType {
+  user: AuthResponse | null;
+  isLoading: boolean;
+  login: (credentials: AuthRequest) => Promise<void>;
+  register: (userData: NewUserRequest) => Promise<void>;
+  logout: () => Promise<void>;
+  isTokenExpired: () => Promise<boolean>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const TOKEN_KEY = 'formula_cardz_token';
+const USER_KEY = 'formula_cardz_user';
+const TOKEN_TIMESTAMP_KEY = 'formula_cardz_token_timestamp';
+const TOKEN_EXPIRY_HOURS = 24;
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<AuthResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const isTokenExpired = async (): Promise<boolean> => {
+    const timestampStr = await AsyncStorage.getItem(TOKEN_TIMESTAMP_KEY);
+    if (!timestampStr) return true;
+
+    const timestamp = parseInt(timestampStr, 10);
+    const now = Date.now();
+    const expiryTime = timestamp + (TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
+
+    return now > expiryTime;
+  };
+
+  const login = async (credentials: AuthRequest): Promise<void> => {
+    try {
+      const response = await apiService.login(credentials);
+
+      await AsyncStorage.setItem(TOKEN_KEY, response.token);
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(response));
+      await AsyncStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
+
+      setUser(response);
+    } catch (error: any) {
+      throw new Error('Login failed!\nError: ' + error.message);
+    }
+  };
+
+  const register = async (userData: NewUserRequest): Promise<void> => {
+    try {
+      const response = await apiService.register(userData);
+
+      await AsyncStorage.setItem(TOKEN_KEY, response.token);
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(response));
+      await AsyncStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
+
+      setUser(response);
+    } catch (error: any) {
+      throw new Error('Registration failed!\nError: ' + error.message);
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY, TOKEN_TIMESTAMP_KEY]);
+    setUser(null);
+  };
+
+  const checkAuthState = async () => {
+    try {
+      const token = await AsyncStorage.getItem(TOKEN_KEY);
+      const userStr = await AsyncStorage.getItem(USER_KEY);
+
+      if (token && userStr && !(await isTokenExpired())) {
+        const userData: AuthResponse = JSON.parse(userStr);
+        setUser(userData);
+      } else {
+        // Token expired or doesn't exist
+        await logout();
+      }
+    } catch (error) {
+      console.error('Error checking auth state:', error);
+      await logout();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthState();
+  }, []);
+
+  const value: AuthContextType = {
+    user,
+    isLoading,
+    login,
+    register,
+    logout,
+    isTokenExpired,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth(): AuthContextType {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
