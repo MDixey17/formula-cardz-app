@@ -12,6 +12,7 @@ interface InputProps {
   error?: string;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  leftPadding?: number;
 }
 
 export function Input({
@@ -23,6 +24,7 @@ export function Input({
                         error,
                         autoCapitalize = 'none',
                         keyboardType = 'default',
+                        leftPadding = 0,
                       }: InputProps) {
   const { colors } = useTheme();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -38,7 +40,7 @@ export function Input({
       )}
       <View style={[styles.inputContainer, { borderColor: error ? colors.error : colors.border }]}>
         <TextInput
-          style={[styles.input, { color: colors.text }]}
+          style={[styles.input, { color: colors.text, paddingLeft: leftPadding }]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}

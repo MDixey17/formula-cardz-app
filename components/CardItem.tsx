@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -11,6 +11,7 @@ interface CardItemProps {
 
 export function CardItem({ card, onPress }: CardItemProps) {
   const { colors } = useTheme();
+  const [imageError, setImageError] = useState<boolean>(false)
 
   const formatPrice = (price?: number) => {
     if (!price) return 'N/A';
@@ -24,9 +25,10 @@ export function CardItem({ card, onPress }: CardItemProps) {
       activeOpacity={0.8}
     >
       <Image
-        source={{ uri: card.imageUrl }}
+        source={{ uri: imageError ? 'https://formulacardz-images.s3.us-east-2.amazonaws.com/Default.png' : card.imageUrl }}
         style={styles.image}
         resizeMode="cover"
+        onError={() => setImageError(true)}
       />
 
       <View style={styles.content}>

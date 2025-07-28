@@ -113,3 +113,25 @@ export interface Dropdown {
   label: string
   id?: string
 }
+
+export interface ParallelDetails {
+  name: string;
+  printRun?: number;
+  isOneOfOne?: boolean;
+}
+
+export type EnrichedParallel = ParallelDetails & { imageUrl?: string };
+
+export interface CardResponse {
+  id: string;
+  year: number;
+  setName: string;
+  cardNumber: string;
+  driverName: string;
+  constructorName: string;
+  subset?: string;
+  rookieCard: boolean;
+  hasOneOfOne: boolean;
+  baseImageUrl: string;
+  parallels: EnrichedParallel[];
+}

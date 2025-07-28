@@ -9,7 +9,7 @@ import {
   OneOfOneCardResponse,
   AddCardToCollectionRequest,
   UpdateCardInCollectionRequest,
-  RemoveCardFromCollectionRequest, Dropdown
+  RemoveCardFromCollectionRequest, Dropdown, CardResponse
 } from '@/types/api';
 
 const API_BASE_URL = "https://formula-cardz-api.onrender.com";
@@ -99,6 +99,11 @@ class ApiService {
 
   async getCardSets(): Promise<Dropdown[]> {
     return this.request<Dropdown[]>('/v1/dropdown/sets');
+  }
+
+  // General Card Data
+  async getCardsBySet(setName: string): Promise<CardResponse[]> {
+    return this.request<CardResponse[]>(`/v1/cards?setName=${encodeURIComponent(setName)}`);
   }
 
   // Drops

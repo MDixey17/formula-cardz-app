@@ -24,6 +24,7 @@ export default function DropsScreen() {
   const [drops, setDrops] = useState<CardDropResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [imageError, setImageError] = useState<boolean>(false)
 
   const loadDrops = async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
@@ -92,9 +93,10 @@ export default function DropsScreen() {
     return (
       <View style={[styles.dropCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <Image
-          source={{ uri: item.imageUrl }}
+          source={{ uri: imageError ? 'https://formulacardz-images.s3.us-east-2.amazonaws.com/Default.png' : item.imageUrl }}
           style={styles.dropImage}
           resizeMode="cover"
+          onError={() => setImageError(true)}
         />
 
         <View style={styles.dropContent}>

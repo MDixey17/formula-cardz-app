@@ -38,7 +38,7 @@ export default function TrackerScreen() {
   const loadSets = async () => {
     try {
       const setsData = await apiService.getCardSets();
-      setSets(setsData);
+      setSets(setsData.filter((s) => !s.label.toLowerCase().includes('Dynasty')));
       if (setsData.length > 0 && !selectedSet) {
         setSelectedSet(setsData[0].value);
       }
@@ -283,6 +283,12 @@ export default function TrackerScreen() {
         </View>
       </View>
 
+      <View>
+        <Text style={[styles.disclaimerText, { color: colors.textSecondary }]}>
+          Just because a 1/1 card is listed as "missing" does not guarantee it is truly undiscovered. It's possible the card has been found but has not been publicly claimed. This tracker is frequently updated based on community input, social media sightings, and population reports from PSA, BGS, and SGC.
+        </Text>
+      </View>
+
       <TouchableOpacity
         style={[styles.setPicker, { backgroundColor: colors.surface, borderColor: colors.border }]}
         onPress={() => setShowSetPicker(!showSetPicker)}
@@ -486,5 +492,10 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+  },
+  disclaimerText: {
+    fontSize: 12,
+    lineHeight: 16,
+    paddingBottom: 16
   },
 });
