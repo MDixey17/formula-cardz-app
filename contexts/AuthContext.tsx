@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthResponse, AuthRequest, NewUserRequest } from '@/types/api';
+import { AuthResponse, AuthRequest, NewUserRequest, UpdatedUserResponse } from '@/types/api';
 import { apiService } from '@/services/apiService';
 
 interface AuthContextType {
@@ -10,6 +10,7 @@ interface AuthContextType {
   register: (userData: NewUserRequest) => Promise<void>;
   logout: () => Promise<void>;
   isTokenExpired: () => Promise<boolean>;
+  refreshUser: (userData: UpdatedUserResponse) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,6 +67,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const refreshUser = async (userData: UpdatedUserResponse): Promise<void> => {
+    try {
+      const updatedData: AuthResponse = {
+        email: userData.user.email,
+        username: userData.user.username,
+        token: user?.token ?? 'NOT-SET',
+        id: userData.user._id,
+        profileImageUrl: userData.user.profileImageUrl,
+        favoriteConstructors: userData.user.favoriteConstructors,
+        favoriteDrivers: userData.user.favoriteDrivers,
+        hasPremium: userData.user.hasPremium,
+      }
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(updatedData));
+      setUser(updatedData);
+    } catch (error: any) {
+      throw new Error('Refresh user failed!\nError: ' + error.message);
+    }
+  }
+
   const logout = async (): Promise<void> => {
     await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY, TOKEN_TIMESTAMP_KEY]);
     setUser(null);
@@ -102,6 +122,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     isTokenExpired,
+    refreshUser
   };
 
   return (

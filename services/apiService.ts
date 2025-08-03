@@ -9,7 +9,7 @@ import {
   OneOfOneCardResponse,
   AddCardToCollectionRequest,
   UpdateCardInCollectionRequest,
-  RemoveCardFromCollectionRequest, Dropdown, CardResponse
+  RemoveCardFromCollectionRequest, Dropdown, CardResponse, ForgotPasswordRequest, UpdatedUserResponse
 } from '@/types/api';
 
 const API_BASE_URL = "https://formula-cardz-api.onrender.com";
@@ -58,8 +58,15 @@ class ApiService {
     });
   }
 
-  async updateUser(userId: string, userData: UpdateUserRequest): Promise<AuthResponse> {
-    return this.request<AuthResponse>(`/users/${userId}`, {
+  async forgotPassword(userData: ForgotPasswordRequest) {
+    return this.request('/v1/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    })
+  }
+
+  async updateUser(userId: string, userData: UpdateUserRequest): Promise<UpdatedUserResponse> {
+    return this.request<UpdatedUserResponse>(`/v1/user/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(userData),
     });

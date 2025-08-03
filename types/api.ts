@@ -33,6 +33,20 @@ export interface AuthResponse {
   hasPremium?: boolean;
 }
 
+export interface UpdatedUserResponse {
+  message: string
+  user: {
+    _id: string
+    username: string
+    email: string
+    profileImageUrl: string
+    favoriteConstructors: string[]
+    favoriteDrivers: string[]
+    hasPremium: boolean;
+    joinDate: string;
+  }
+}
+
 export interface CardCollectionResponse {
   // Card fields
   id: string;
@@ -134,4 +148,8 @@ export interface CardResponse {
   hasOneOfOne: boolean;
   baseImageUrl: string;
   parallels: EnrichedParallel[];
+}
+
+export interface ForgotPasswordRequest {
+  email: string
 }

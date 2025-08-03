@@ -13,6 +13,7 @@ interface InputProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
   leftPadding?: number;
+  onSubmitEditing?: () => void;
 }
 
 export function Input({
@@ -25,6 +26,7 @@ export function Input({
                         autoCapitalize = 'none',
                         keyboardType = 'default',
                         leftPadding = 0,
+                        onSubmitEditing,
                       }: InputProps) {
   const { colors } = useTheme();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -48,6 +50,7 @@ export function Input({
           secureTextEntry={secureTextEntry && !isPasswordVisible}
           autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
+          onSubmitEditing={onSubmitEditing}
         />
         {secureTextEntry && (
           <TouchableOpacity

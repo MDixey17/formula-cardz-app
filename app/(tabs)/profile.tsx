@@ -7,6 +7,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { ForgotPasswordModal } from '@/components/ForgotPasswordModal';
+import { SettingsModal } from '@/components/SettingsModal';
 import { AuthRequest, NewUserRequest } from '@/types/api';
 
 export default function ProfileScreen() {
@@ -21,6 +23,10 @@ export default function ProfileScreen() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Modal states
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Form errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -123,7 +129,7 @@ export default function ProfileScreen() {
             <Text style={[styles.title, { color: colors.text }]}>Profile</Text>
             <TouchableOpacity
               style={[styles.iconButton, { backgroundColor: colors.surface }]}
-              onPress={() => {}}
+              onPress={() => setShowSettings(true)}
             >
               <Feather name={"settings"} size={20} color={colors.textSecondary} />
             </TouchableOpacity>
@@ -220,6 +226,11 @@ export default function ProfileScreen() {
               Formula Cardz is an independent application and is not affiliated with, endorsed by, or sponsored by Formula 1, Topps, or any of their respective affiliates. All trademarks and copyrights belong to their respective owners.
             </Text>
           </View>
+
+          <SettingsModal
+            visible={showSettings}
+            onClose={() => setShowSettings(false)}
+          />
         </ScrollView>
       </SafeAreaView>
     );
@@ -319,7 +330,10 @@ export default function ProfileScreen() {
 
           {isLoginMode && (
             <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={[styles.forgotPasswordText, { color: colors.primary }]}>
+              <Text
+                style={[styles.forgotPasswordText, { color: colors.primary }]}
+                onPress={() => setShowForgotPassword(true)}
+              >
                 Forgot Password?
               </Text>
             </TouchableOpacity>
@@ -331,6 +345,11 @@ export default function ProfileScreen() {
             Formula Cardz is an independent application and is not affiliated with, endorsed by, or sponsored by Formula 1, Topps, or any of their respective affiliates. All trademarks and copyrights belong to their respective owners.
           </Text>
         </View>
+
+        <ForgotPasswordModal
+          visible={showForgotPassword}
+          onClose={() => setShowForgotPassword(false)}
+        />
       </ScrollView>
     </SafeAreaView>
   );
