@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ForgotPasswordModal } from '@/components/ForgotPasswordModal';
 import { SettingsModal } from '@/components/SettingsModal';
 import { AuthRequest, NewUserRequest } from '@/types/api';
+import { Checkbox } from '@/components/Checkbox';
 
 export default function ProfileScreen() {
   const { user, login, register, logout, isLoading } = useAuth();
@@ -23,6 +24,7 @@ export default function ProfileScreen() {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   // Modal states
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -71,7 +73,7 @@ export default function ProfileScreen() {
     try {
       if (isLoginMode) {
         const credentials: AuthRequest = { email, password };
-        await login(credentials);
+        await login(credentials, rememberMe);
       } else {
         const userData: NewUserRequest = {
           username,
@@ -88,6 +90,7 @@ export default function ProfileScreen() {
       setPassword('');
       setUsername('');
       setConfirmPassword('');
+      setRememberMe(false);
       setErrors({});
     } catch (error) {
       Alert.alert(
@@ -336,6 +339,12 @@ export default function ProfileScreen() {
               >
                 Forgot Password?
               </Text>
+            </TouchableOpacity>
+          )}
+
+          {isLoginMode && (
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Checkbox label={"Remember Me?"} checked={rememberMe} onChange={setRememberMe} />
             </TouchableOpacity>
           )}
         </View>

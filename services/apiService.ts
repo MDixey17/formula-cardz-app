@@ -44,8 +44,8 @@ class ApiService {
   }
 
   // Authentication
-  async login(credentials: AuthRequest): Promise<AuthResponse> {
-    return this.request<AuthResponse>('/v1/auth/login', {
+  async login(credentials: AuthRequest, expireOverride?: string): Promise<AuthResponse> {
+    return this.request<AuthResponse>(expireOverride !== undefined ? `/v1/auth/login?expireOverride=${expireOverride}` : '/v1/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });

@@ -6,7 +6,7 @@ import { apiService } from '@/services/apiService';
 interface AuthContextType {
   user: AuthResponse | null;
   isLoading: boolean;
-  login: (credentials: AuthRequest) => Promise<void>;
+  login: (credentials: AuthRequest, rememberMe?: boolean) => Promise<void>;
   register: (userData: NewUserRequest) => Promise<void>;
   logout: () => Promise<void>;
   isTokenExpired: () => Promise<boolean>;
@@ -18,7 +18,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const TOKEN_KEY = 'formula_cardz_token';
 const USER_KEY = 'formula_cardz_user';
 const TOKEN_TIMESTAMP_KEY = 'formula_cardz_token_timestamp';
+const REMEMBER_ME_KEY = 'formula_cardz_remember_me';
 const TOKEN_EXPIRY_HOURS = 24;
+const REMEMBER_ME_EXPIRY_HOURS = 24 * 60; // 60 days
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -30,22 +32,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const isTokenExpired = async (): Promise<boolean> => {
     const timestampStr = await AsyncStorage.getItem(TOKEN_TIMESTAMP_KEY);
+    const rememberMeStr = await AsyncStorage.getItem(REMEMBER_ME_KEY);
     if (!timestampStr) return true;
 
     const timestamp = parseInt(timestampStr, 10);
+    const isRememberMe = rememberMeStr === 'true';
     const now = Date.now();
-    const expiryTime = timestamp + (TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
+    const expiryHours = isRememberMe ? REMEMBER_ME_EXPIRY_HOURS : TOKEN_EXPIRY_HOURS;
+    const expiryTime = timestamp + (expiryHours * 60 * 60 * 1000);
 
     return now > expiryTime;
   };
 
-  const login = async (credentials: AuthRequest): Promise<void> => {
+  const login = async (credentials: AuthRequest, rememberMe: boolean = false): Promise<void> => {
     try {
       const response = await apiService.login(credentials);
 
       await AsyncStorage.setItem(TOKEN_KEY, response.token);
       await AsyncStorage.setItem(USER_KEY, JSON.stringify(response));
       await AsyncStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
+      await AsyncStorage.setItem(REMEMBER_ME_KEY, rememberMe ? 'true' : 'false');
 
       setUser(response);
     } catch (error: any) {
@@ -60,6 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await AsyncStorage.setItem(TOKEN_KEY, response.token);
       await AsyncStorage.setItem(USER_KEY, JSON.stringify(response));
       await AsyncStorage.setItem(TOKEN_TIMESTAMP_KEY, Date.now().toString());
+      await AsyncStorage.setItem(REMEMBER_ME_KEY, 'false'); // Any new account defaults to 1 day
 
       setUser(response);
     } catch (error: any) {
@@ -87,7 +94,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const logout = async (): Promise<void> => {
-    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY, TOKEN_TIMESTAMP_KEY]);
+    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY, TOKEN_TIMESTAMP_KEY, REMEMBER_ME_KEY]);
     setUser(null);
   };
 
