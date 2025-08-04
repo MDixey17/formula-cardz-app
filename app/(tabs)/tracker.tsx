@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -300,22 +300,24 @@ export default function TrackerScreen() {
       </TouchableOpacity>
 
       {showSetPicker && (
-        <View style={[styles.setList, { backgroundColor: colors.surface }]}>
-          {sets.map((set) => (
-            <TouchableOpacity
-              key={set.value}
-              style={[
-                styles.setItem,
-                { backgroundColor: selectedSet === set.value ? colors.primary + '20' : 'transparent' }
-              ]}
-              onPress={() => {
-                setSelectedSet(set.value);
-                setShowSetPicker(false);
-              }}
-            >
-              <Text style={[styles.setItemText, { color: colors.text }]}>{set.label}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={[styles.setListContainer]}>
+          <ScrollView style={[styles.setList, { backgroundColor: colors.surface }]} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
+            {sets.map((set) => (
+              <TouchableOpacity
+                key={set.value}
+                style={[
+                  styles.setItem,
+                  { backgroundColor: selectedSet === set.value ? colors.primary + '20' : 'transparent' }
+                ]}
+                onPress={() => {
+                  setSelectedSet(set.value);
+                  setShowSetPicker(false);
+                }}
+              >
+                <Text style={[styles.setItemText, { color: colors.text }]}>{set.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       )}
 
@@ -386,10 +388,13 @@ const styles = StyleSheet.create({
   setPickerText: {
     fontSize: 16,
   },
-  setList: {
+  setListContainer: {
     borderRadius: 8,
     marginBottom: 16,
-    maxHeight: 200,
+    overflow: 'hidden', // optional to avoid overspill borders
+  },
+  setList: {
+    maxHeight: 200, // You can increase/decrease this if needed
   },
   setItem: {
     paddingHorizontal: 16,
