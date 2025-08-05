@@ -24,12 +24,12 @@ export function CardItem({ card, onPress }: CardItemProps) {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Image
-        source={{ uri: imageError ? 'https://formulacardz-images.s3.us-east-2.amazonaws.com/Default.png' : card.imageUrl }}
-        style={styles.image}
-        resizeMode="cover"
-        onError={() => setImageError(true)}
-      />
+      {/*<Image*/}
+      {/*  source={{ uri: imageError ? 'https://formulacardz-images.s3.us-east-2.amazonaws.com/Default.png' : card.imageUrl }}*/}
+      {/*  style={styles.image}*/}
+      {/*  resizeMode="cover"*/}
+      {/*  onError={() => setImageError(true)}*/}
+      {/*/>*/}
 
       <View style={styles.content}>
         <View style={styles.header}>
