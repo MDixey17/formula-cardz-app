@@ -78,17 +78,6 @@ export default function TrackerScreen() {
   const applyFilters = () => {
     let filtered = [...cards];
 
-    // Filter by found/missing status
-    filtered = filtered.filter(card => {
-      const hasFoundParallels = card.parallels.some(p => p.isOneOfOne && p.isOneOfOneFound);
-      const hasMissingParallels = card.parallels.some(p => p.isOneOfOne && !p.isOneOfOneFound);
-
-      if (filters.showFound && filters.showMissing) return true;
-      if (filters.showFound && !filters.showMissing) return hasFoundParallels;
-      if (!filters.showFound && filters.showMissing) return hasMissingParallels;
-      return false;
-    });
-
     // Filter by driver name
     if (filters.searchDriver.trim()) {
       const searchTerm = filters.searchDriver.toLowerCase();
@@ -114,6 +103,17 @@ export default function TrackerScreen() {
         )
       })).filter(card => card.parallels.length > 0);
     }
+
+    // Filter by found/missing status
+    filtered = filtered.filter(card => {
+      const hasFoundParallels = card.parallels.some(p => p.isOneOfOne && p.isOneOfOneFound);
+      const hasMissingParallels = card.parallels.some(p => p.isOneOfOne && !p.isOneOfOneFound);
+
+      if (filters.showFound && filters.showMissing) return true;
+      if (filters.showFound && !filters.showMissing) return hasFoundParallels;
+      if (!filters.showFound && filters.showMissing) return hasMissingParallels;
+      return false;
+    });
 
     setFilteredCards(filtered);
   };
