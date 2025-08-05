@@ -51,6 +51,7 @@ export default function DropsScreen() {
 
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
+    date.setDate(date.getDate() + 1);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       year: 'numeric',

@@ -332,6 +332,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 12,
     marginBottom: 16,
+    minWidth: 85
   },
   suggestions: {
     flexDirection: 'row',

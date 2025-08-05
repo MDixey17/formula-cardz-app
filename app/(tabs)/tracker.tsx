@@ -407,6 +407,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
+    minHeight: 228
   },
   filterRow: {
     flexDirection: 'row',
