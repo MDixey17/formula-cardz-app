@@ -349,6 +349,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingBottom: 8,
   },
   header: {
     flexDirection: 'row',
@@ -407,7 +408,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
-    minHeight: 228
+    minHeight: 236
   },
   filterRow: {
     flexDirection: 'row',

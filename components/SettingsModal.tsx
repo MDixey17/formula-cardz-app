@@ -202,12 +202,14 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
             </View>
 
             <View style={styles.addItemContainer}>
-              <Input
-                value={newDriver}
-                onChangeText={setNewDriver}
-                placeholder="Add a driver..."
-                onSubmitEditing={addDriver}
-              />
+              <View style={{ flex: 1 }}>
+                <Input
+                  value={newDriver}
+                  onChangeText={setNewDriver}
+                  placeholder="Add a driver..."
+                  onSubmitEditing={addDriver}
+                />
+              </View>
               <View style={{ paddingTop: 8 }}>
                 <Button
                   title="Add"
@@ -241,12 +243,14 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
             </View>
 
             <View style={styles.addItemContainer}>
-              <Input
-                value={newConstructor}
-                onChangeText={setNewConstructor}
-                placeholder="Add a constructor..."
-                onSubmitEditing={addConstructor}
-              />
+              <View style={{flex: 1}}>
+                <Input
+                  value={newConstructor}
+                  onChangeText={setNewConstructor}
+                  placeholder="Add a constructor..."
+                  onSubmitEditing={addConstructor}
+                />
+              </View>
               <View style={{ paddingTop: 8 }}>
                 <Button
                   title="Add"
