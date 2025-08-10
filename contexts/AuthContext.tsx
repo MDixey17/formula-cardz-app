@@ -46,7 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (credentials: AuthRequest, rememberMe: boolean = false): Promise<void> => {
     try {
-      const response = await apiService.login(credentials);
+      const response = await apiService.login(credentials, rememberMe ? '30d' : undefined);
 
       await AsyncStorage.setItem(TOKEN_KEY, response.token);
       await AsyncStorage.setItem(USER_KEY, JSON.stringify(response));
