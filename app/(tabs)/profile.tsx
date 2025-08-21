@@ -95,7 +95,7 @@ export default function ProfileScreen() {
     } catch (error) {
       Alert.alert(
         'Error',
-        error instanceof Error ? error.message : 'Authentication failed'
+        error instanceof Error ? 'Either the email or password provided is incorrect.' : 'Authentication failed.'
       );
     } finally {
       setIsSubmitting(false);
