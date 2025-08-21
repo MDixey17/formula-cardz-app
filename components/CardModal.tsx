@@ -6,7 +6,7 @@ import {
   Modal,
   ScrollView,
   TouchableOpacity,
-  Alert,
+  Alert, TextInput
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -80,10 +80,10 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
   const [condition, setCondition] = useState('Raw');
   const [purchasePrice, setPurchasePrice] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('');
+  const [cardSearchQuery, setCardSearchQuery] = useState('');
 
   // UI state
   const [showSetDropdown, setShowSetDropdown] = useState(false);
-  const [showCardDropdown, setShowCardDropdown] = useState(false);
   const [showParallelDropdown, setShowParallelDropdown] = useState(false);
   const [showConditionDropdown, setShowConditionDropdown] = useState(false);
 
@@ -140,6 +140,7 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
       const matchingCard = cards.find(card => card.id === editingCard.id);
       if (matchingCard) {
         setSelectedCard(matchingCard);
+        setCardSearchQuery(`#${matchingCard.cardNumber} - ${matchingCard.driverName}`)
       }
     }
   }, [cards, editingCard]);
@@ -152,12 +153,14 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
     setCondition('Raw');
     setPurchasePrice('');
     setPurchaseDate('');
+    setCardSearchQuery('');
   };
 
   const handleSetSelect = (setName: string) => {
     setSelectedSet(setName);
     setSelectedCard(null);
     setSelectedParallel('');
+    setCardSearchQuery('');
     setShowSetDropdown(false);
     loadCards(setName);
   };
@@ -165,7 +168,7 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
   const handleCardSelect = (card: CardResponse) => {
     setSelectedCard(card);
     setSelectedParallel('');
-    setShowCardDropdown(false);
+    setCardSearchQuery(`#${card.cardNumber} - ${card.driverName}`)
   };
 
   const handleSave = async () => {
@@ -282,6 +285,19 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
   const canSelectCard = selectedSet && cards.length > 0;
   const canSelectParallel = selectedCard && selectedCard.parallels.length > 0;
 
+  // Filter cards based on search query
+  const filteredCards = cards.filter(card => {
+    if (!cardSearchQuery.trim()) return true;
+    const query = cardSearchQuery.toLowerCase();
+    return (
+      card.cardNumber.toLowerCase().includes(query) ||
+      card.driverName.toLowerCase().includes(query) ||
+      `#${card.cardNumber}`.toLowerCase().includes(query)
+    );
+  });
+
+  const showCardDropdown = cardSearchQuery.length > 0 && canSelectCard && filteredCards.length > 0;
+
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -311,23 +327,26 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
           <Text style={[styles.label, { color: canSelectCard ? colors.text : colors.textSecondary }]}>
             Card Number *
           </Text>
-          <TouchableOpacity
+          <View
             style={[
-              styles.selector,
+              styles.inputContainer,
               {
                 backgroundColor: canSelectCard ? colors.surface : colors.border,
                 borderColor: colors.border,
                 opacity: canSelectCard ? 1 : 0.5,
               }
             ]}
-            onPress={() => canSelectCard && setShowCardDropdown(!showCardDropdown)}
-            disabled={!canSelectCard}
           >
-            <Text style={[styles.selectorText, { color: selectedCard ? colors.text : colors.textSecondary }]}>
-              {selectedCard ? `#${selectedCard.cardNumber} - ${selectedCard.driverName}` : 'Select a card...'}
-            </Text>
-          </TouchableOpacity>
-          {showCardDropdown && canSelectCard && (
+            <TextInput
+              style={[styles.input, { color: colors.text }]}
+              value={cardSearchQuery}
+              onChangeText={setCardSearchQuery}
+              placeholder={canSelectCard ? "Type card number or driver name..." : "Select a set first..."}
+              placeholderTextColor={colors.textSecondary}
+              editable={canSelectCard === '' ? undefined : canSelectCard}
+            />
+          </View>
+          {showCardDropdown && (
             <View style={[styles.dropdown, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <ScrollView style={styles.dropdownScroll} nestedScrollEnabled>
                 {isLoading ? (
@@ -335,7 +354,7 @@ export function CardModal({ visible, onClose, onSave, editingCard }: CardModalPr
                     <LoadingSpinner size="small" />
                   </View>
                 ) : (
-                  cards.map((card) => (
+                  filteredCards.map((card) => (
                     <TouchableOpacity
                       key={card.id}
                       style={[
@@ -513,6 +532,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 16,
     maxHeight: 200,
+    marginTop: 8,
   },
   dropdownScroll: {
     maxHeight: 200,
@@ -554,5 +574,17 @@ const styles = StyleSheet.create({
   footerButtons: {
     flexDirection: 'row',
     gap: 12,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+  },
+  input: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
   },
 });
