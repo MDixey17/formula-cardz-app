@@ -50,7 +50,7 @@ const COMMON_DRIVERS = [
 
 export function SettingsModal({ visible, onClose }: SettingsModalProps) {
   const { colors } = useTheme();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
 
   const [username, setUsername] = useState('');
   const [favoriteDrivers, setFavoriteDrivers] = useState<string[]>([]);
@@ -141,6 +141,28 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
       onClose();
     }
   };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return
+
+    setIsSaving(true);
+    try {
+      Alert.alert(
+        'Are you sure?',
+        'Deleting your account is a permanent action and cannot be undone.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Delete', style: 'destructive', onPress: () => apiService.deleteUser(user.id) },
+        ]
+      )
+      await logout()
+      onClose()
+    } catch (error) {
+      Alert.alert('Error', 'Failed to delete account. Please try again later.');
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   const renderFavoriteItem = (item: string, onRemove: () => void, icon: React.ReactNode) => (
     <View key={item} style={[styles.favoriteItem, { backgroundColor: colors.surface }]}>
@@ -275,6 +297,7 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
               )}
             </View>
           </View>
+          <Button title="Delete Account" onPress={handleDeleteAccount} variant={'primary'} />
         </ScrollView>
 
         <View style={[styles.footer, { borderTopColor: colors.border }]}>
