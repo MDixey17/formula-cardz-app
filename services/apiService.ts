@@ -72,6 +72,12 @@ class ApiService {
     });
   }
 
+  async deleteUser(userId: string): Promise<void> {
+    return this.request(`/v1/user/${userId}`, {
+      method: 'DELETE',
+    })
+  }
+
   // Collection Management
   async getCollection(userId: string): Promise<CardCollectionResponse[]> {
     return this.request<CardCollectionResponse[]>(`/v1/ownership/${userId}`);
