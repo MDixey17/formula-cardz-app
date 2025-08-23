@@ -142,6 +142,14 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
     }
   };
 
+  const onDeleteConfirm = async () => {
+    if (!user) return
+
+    await apiService.deleteUser(user.id)
+    await logout()
+    onClose()
+  }
+
   const handleDeleteAccount = async () => {
     if (!user) return
 
@@ -152,11 +160,9 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
         'Deleting your account is a permanent action and cannot be undone.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Delete', style: 'destructive', onPress: () => apiService.deleteUser(user.id) },
+          { text: 'Delete', style: 'destructive', onPress: onDeleteConfirm },
         ]
       )
-      await logout()
-      onClose()
     } catch (error) {
       Alert.alert('Error', 'Failed to delete account. Please try again later.');
     } finally {
@@ -297,7 +303,9 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
               )}
             </View>
           </View>
-          <Button title="Delete Account" onPress={handleDeleteAccount} variant={'primary'} />
+          <View style={styles.deleteAccount}>
+            <Button title="Delete Account" onPress={handleDeleteAccount} variant={'primary'} />
+          </View>
         </ScrollView>
 
         <View style={[styles.footer, { borderTopColor: colors.border }]}>
@@ -402,4 +410,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     gap: 12,
   },
+  deleteAccount: {
+    marginBottom: 12
+  }
 });
