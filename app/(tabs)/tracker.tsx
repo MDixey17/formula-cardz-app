@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -117,6 +117,8 @@ export default function TrackerScreen() {
 
     setFilteredCards(filtered);
   };
+
+  const openLink = (url: string) => Linking.openURL(url)
 
   const renderParallel = (parallel: EnabledParallel, cardId: string) => {
     if (!parallel.isOneOfOne) return null;
@@ -285,7 +287,17 @@ export default function TrackerScreen() {
 
       <View>
         <Text style={[styles.disclaimerText, { color: colors.textSecondary }]}>
-          Just because a 1/1 card is listed as "missing" does not guarantee it is truly undiscovered. It's possible the card has been found but has not been publicly claimed. This tracker is frequently updated based on community input, social media sightings, and population reports from PSA, BGS, and SGC.
+          Just because a 1/1 card is listed as "missing" does not guarantee it is truly undiscovered. It's possible the card has been found but has not been publicly claimed. This tracker is frequently updated based on community input, social media sightings, and population reports from PSA, BGS, and SGC.{"\n\n"}Additional data is sourced from a{" "}
+          <Text style={styles.link} onPress={() => openLink('https://docs.google.com/spreadsheets/d/122GpopxDRs_zhY6DjGk3RpM6ire3b1WJ-gZokMozECs/edit?gid=374980234#gid=374980234')}>
+            community spreadsheet
+          </Text>{" "}
+          maintained by collectors{" "}
+          <Text style={styles.link} onPress={() => openLink('https://www.instagram.com/kceecards')}>kceecards</Text>
+          ,{" "}
+          <Text style={styles.link} onPress={() => openLink('https://www.instagram.com/justaninchident_cards')}>justaninchident_cards</Text>
+          ,{" "}and{" "}
+          <Text style={styles.link} onPress={() => openLink('https://www.instagram.com/gridcardsuk')}>gridcardsuk</Text>
+          .
         </Text>
       </View>
 
@@ -505,4 +517,8 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     paddingBottom: 16
   },
+  link: {
+    color: "#1B95E0",
+    textDecorationLine: 'underline'
+  }
 });
