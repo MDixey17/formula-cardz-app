@@ -109,6 +109,8 @@ export interface EnabledParallel {
   imageUrl?: string;
   isOneOfOne?: boolean;
   isOneOfOneFound?: boolean;
+  numberOfOneOfOnesFound?: number
+  hasBounty?: boolean
 }
 
 export interface OneOfOneCardResponse {

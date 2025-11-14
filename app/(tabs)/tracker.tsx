@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Input } from '@/components/Input';
@@ -125,6 +125,10 @@ export default function TrackerScreen() {
 
     const isFound = parallel.isOneOfOneFound;
 
+    const foundText = parallel.numberOfOneOfOnesFound !== undefined && parallel.numberOfOneOfOnesFound > 1
+      ? `${parallel.numberOfOneOfOnesFound} Found`
+      : "Found"
+
     return (
       <View
         key={`${cardId}-${parallel.name}`}
@@ -150,7 +154,7 @@ export default function TrackerScreen() {
               styles.statusText,
               { color: isFound ? colors.success : colors.error }
             ]}>
-              {isFound ? 'Found' : 'Missing'}
+              {isFound ? foundText : `Missing`}
             </Text>
           </View>
         </View>
@@ -267,7 +271,7 @@ export default function TrackerScreen() {
   const statusCounts = getStatusCounts();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
         <View>
           <Text style={[styles.title, { color: colors.text }]}>1/1 Tracker</Text>
@@ -361,7 +365,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingBottom: 8,
+    paddingBottom: 0,
   },
   header: {
     flexDirection: 'row',
