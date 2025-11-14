@@ -126,7 +126,7 @@ export default function ProfileScreen() {
 
   if (user) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView edges={["top"]} style={[styles.container, { backgroundColor: colors.background }]}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text }]}>Profile</Text>
@@ -240,7 +240,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.authHeader}>
           <Text style={[styles.authTitle, { color: colors.text }]}>
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingBottom: 8,
+    paddingBottom: 0,
   },
   header: {
     flexDirection: 'row',

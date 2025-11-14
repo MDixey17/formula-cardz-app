@@ -283,7 +283,7 @@ export default function CollectionScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
         <View>
           <Text style={[styles.title, { color: colors.text }]}>My Collection</Text>
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingBottom: 8,
+    paddingBottom: 0,
   },
   header: {
     flexDirection: 'row',
